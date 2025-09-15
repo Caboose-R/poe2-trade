@@ -9,18 +9,38 @@ class ComputerVision extends EventEmitter {
     this.pythonProcess = null;
     this.isDetecting = false;
     this.detectionConfig = null;
-    this.pythonScriptPath = path.join(__dirname, '../../python/cv_detection.py');
+    
+    // Get the correct Python script path for packaged app
+    const { app } = require('electron');
+    if (app && app.isPackaged) {
+      // In packaged app, Python scripts are in resources/python
+      this.pythonScriptPath = path.join(process.resourcesPath, 'python', 'cv_detection.py');
+    } else {
+      // In development, use relative path
+      this.pythonScriptPath = path.join(__dirname, '../../python/cv_detection.py');
+    }
+    
     // Try multiple Python executable paths
-    this.pythonExecutablePaths = [
-      path.join(__dirname, '../../python/python.exe'), // Embedded Python
-      'python', // System Python
-      'python3', // Python 3
-      'py', // Python launcher on Windows
-      'C:\\Python39\\python.exe', // Common Windows Python installation
+    this.pythonExecutablePaths = [];
+    
+    if (app && app.isPackaged) {
+      // In packaged app, try embedded Python first
+      this.pythonExecutablePaths.push(
+        path.join(process.resourcesPath, 'python', 'python.exe'),
+        path.join(process.resourcesPath, 'python', 'python3.exe')
+      );
+    }
+    
+    // Add system Python paths
+    this.pythonExecutablePaths.push(
+      'python',
+      'python3',
+      'py',
+      'C:\\Python39\\python.exe',
       'C:\\Python310\\python.exe',
       'C:\\Python311\\python.exe',
       'C:\\Python312\\python.exe'
-    ];
+    );
     this.pythonExecutable = null; // Will be determined dynamically
   }
 
