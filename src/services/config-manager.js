@@ -5,7 +5,10 @@ const CryptoJS = require('crypto-js');
 
 class ConfigManager {
   constructor() {
-    this.configPath = path.join(process.cwd(), 'config');
+    // Use app.getPath('userData') for proper config directory in packaged app
+    const { app } = require('electron');
+    const userDataPath = app ? app.getPath('userData') : path.join(process.cwd(), 'config');
+    this.configPath = path.join(userDataPath, 'config');
     this.configFile = path.join(this.configPath, 'settings.json');
     this.encryptionKey = 'poe2-trade-config-key-2024'; // In production, this should be derived from user input
     this.config = new Map();

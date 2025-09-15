@@ -26,14 +26,28 @@ if (!fs.existsSync(pythonDistPath)) {
     fs.mkdirSync(pythonDistPath, { recursive: true });
 }
 
-// Copy Python script
-fs.copyFileSync('python/cv_detection.py', path.join(pythonDistPath, 'cv_detection.py'));
+// Copy all Python scripts
+const pythonFiles = [
+    'cv_detection.py',
+    'install_python.py',
+    'requirements.txt'
+];
+
+pythonFiles.forEach(file => {
+    const srcPath = path.join('python', file);
+    const destPath = path.join(pythonDistPath, file);
+    if (fs.existsSync(srcPath)) {
+        fs.copyFileSync(srcPath, destPath);
+        console.log(`Copied ${file}`);
+    }
+});
 
 // Create Python requirements file for embedded environment
 const embeddedRequirements = `opencv-python==4.8.1.78
 numpy==1.24.3
 mss==9.0.1
-Pillow==10.0.1`;
+Pillow==10.0.1
+pyautogui==0.9.54`;
 fs.writeFileSync(path.join(pythonDistPath, 'requirements.txt'), embeddedRequirements);
 
 console.log('Build completed successfully!');
