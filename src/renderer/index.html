@@ -1,0 +1,343 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PoE2 Trade - Path of Exile 2 Trading Assistant</title>
+    <link rel="stylesheet" href="styles/main.css">
+    <link rel="stylesheet" href="styles/components.css">
+    <link rel="stylesheet" href="styles/themes.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+</head>
+<body class="theme-dark">
+    <div id="app">
+        <!-- Header -->
+        <header class="app-header">
+            <div class="header-content">
+                <div class="logo-section">
+                    <i class="fas fa-gem logo-icon"></i>
+                    <h1 class="app-title">PoE2 Trade</h1>
+                    <span class="app-subtitle">Trading Assistant</span>
+                </div>
+                <div class="header-actions">
+                    <div id="automation-status" class="automation-status" style="display: none;">
+                        <span class="status-indicator">●</span>
+                        <span class="status-text">Automation Running</span>
+                    </div>
+                    <button id="test-cv-btn" class="btn btn-icon" title="Test Computer Vision">
+                        <i class="fas fa-eye"></i>
+                    </button>
+                    <button id="settings-btn" class="btn btn-primary" title="Settings">
+                        <i class="fas fa-cog"></i>
+                        <span>Settings</span>
+                    </button>
+                </div>
+            </div>
+        </header>
+
+        <!-- Main Content -->
+        <main class="app-main">
+            <!-- Sidebar -->
+            <aside class="sidebar">
+                <div class="sidebar-section">
+                    <h3 class="section-title">
+                        <i class="fas fa-chart-line"></i>
+                        Statistics
+                    </h3>
+                    <div id="stats-panel" class="stats-panel">
+                        <div class="stat-item">
+                            <span class="stat-label">Active Searches</span>
+                            <span id="active-searches-count" class="stat-value">0</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">Items Found</span>
+                            <span id="items-found-count" class="stat-value">0</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">Travels Made</span>
+                            <span id="travels-count" class="stat-value">0</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="sidebar-section">
+                    <h3 class="section-title">
+                        <i class="fas fa-search"></i>
+                        Live Searches
+                    </h3>
+                    <div class="search-controls">
+                        <button id="add-search-btn" class="btn btn-primary btn-sm">
+                            <i class="fas fa-plus"></i>
+                            Add Search
+                        </button>
+                        <button id="import-searches-btn" class="btn btn-secondary btn-sm">
+                            <i class="fas fa-upload"></i>
+                            Import
+                        </button>
+                        <button id="export-searches-btn" class="btn btn-secondary btn-sm">
+                            <i class="fas fa-download"></i>
+                            Export
+                        </button>
+                    </div>
+                    <div class="connection-controls">
+                        <button id="connect-all-btn" class="btn btn-primary btn-sm">
+                            <i class="fas fa-play"></i>
+                            Connect All
+                        </button>
+                        <button id="disconnect-all-btn" class="btn btn-secondary btn-sm">
+                            <i class="fas fa-stop"></i>
+                            Disconnect All
+                        </button>
+                    </div>
+                    <div id="search-list" class="search-list">
+                        <!-- Search items will be populated here -->
+                    </div>
+                </div>
+            </aside>
+
+            <!-- Content Area -->
+            <div class="content-area">
+                <!-- Search Results -->
+                <section class="results-section">
+                    <div class="section-header">
+                        <h2 class="section-title">
+                            <i class="fas fa-list"></i>
+                            Search Results
+                        </h2>
+                        <div class="section-actions">
+                            <button id="clear-results-btn" class="btn btn-secondary btn-sm">
+                                <i class="fas fa-trash"></i>
+                                Clear
+                            </button>
+                        </div>
+                    </div>
+                    <div id="results-container" class="results-container">
+                        <div class="empty-state">
+                            <i class="fas fa-search empty-icon"></i>
+                            <h3>No search results yet</h3>
+                            <p>Add a live search to start monitoring for items</p>
+                        </div>
+                    </div>
+                </section>
+            </div>
+        </main>
+
+        <!-- Status Bar -->
+        <footer class="status-bar">
+            <div class="status-left">
+                <div id="connection-status" class="status-indicator">
+                    <i class="fas fa-circle status-icon"></i>
+                    <span class="status-text">Disconnected</span>
+                </div>
+                <div id="cv-status" class="status-indicator">
+                    <i class="fas fa-eye status-icon"></i>
+                    <span class="status-text">CV: Inactive</span>
+                </div>
+            </div>
+            <div class="status-right">
+                <span id="app-version" class="version-text">v1.0.0</span>
+            </div>
+        </footer>
+    </div>
+
+    <!-- Modals -->
+    <!-- Add Search Modal -->
+    <div id="add-search-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">Add Live Search</h3>
+                <button class="modal-close" data-modal="add-search-modal">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form id="add-search-form">
+                    <div class="form-group">
+                        <label for="search-name" class="form-label">Search Name</label>
+                        <input type="text" id="search-name" class="form-input" placeholder="Enter search name" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="search-id" class="form-label">Trade URL or Search ID</label>
+                        <input type="text" id="search-id" class="form-input" placeholder="Paste full trade URL or enter search ID" required>
+                        <small class="form-help">You can paste the full URL from the PoE trade website (e.g., https://www.pathofexile.com/trade2/search/poe2/Rise%20of%20the%20Abyssal/9lmBZa0CK) or just the search ID</small>
+                    </div>
+                    <div class="form-group" id="league-group" style="display: none;">
+                        <label for="search-league" class="form-label">League</label>
+                        <input type="text" id="search-league" class="form-input" placeholder="Enter league name (e.g., Rise of the Abyssal)">
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-modal="add-search-modal">Cancel</button>
+                <button type="submit" form="add-search-form" class="btn btn-primary">Add Search</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Settings Modal -->
+    <div id="settings-modal" class="modal">
+        <div class="modal-content modal-large">
+            <div class="modal-header">
+                <h3 class="modal-title">Settings</h3>
+                <button class="modal-close" data-modal="settings-modal">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="settings-tabs">
+                    <div class="tab-nav">
+                        <button class="tab-btn active" data-tab="general">General</button>
+                        <button class="tab-btn" data-tab="auth">Authentication</button>
+                        <button class="tab-btn" data-tab="trading">Trading</button>
+                        <button class="tab-btn" data-tab="computer-vision">Computer Vision</button>
+                        <button class="tab-btn" data-tab="automation">Automation</button>
+                    </div>
+                    <div class="tab-content">
+                        <div id="general-tab" class="tab-pane active">
+                            <div class="form-group">
+                                <label for="theme-select" class="form-label">Theme</label>
+                                <select id="theme-select" class="form-select">
+                                    <option value="dark">Dark</option>
+                                    <option value="light">Light</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="language-select" class="form-label">Language</label>
+                                <select id="language-select" class="form-select">
+                                    <option value="en">English</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Automation Settings</label>
+                                <div class="form-check">
+                                    <input type="checkbox" id="auto-travel-enabled" class="form-check-input">
+                                    <label for="auto-travel-enabled" class="form-check-label">Enable automatic travel to hideout on new search results</label>
+                                </div>
+                                <small class="form-help">Automatically travel to seller's hideout when new items are found. Requires both POESESSID and cf_clearance cookies.</small>
+                            </div>
+                            <div class="form-group">
+                                <div class="form-check">
+                                    <input type="checkbox" id="auto-purchase" class="form-check-input">
+                                    <label for="auto-purchase" class="form-check-label">Enable Automatic Purchase</label>
+                                </div>
+                                <small class="form-help">Automatically click on detected items using the selected modifiers (default: Ctrl+Click)</small>
+                            </div>
+                        </div>
+                        <div id="auth-tab" class="tab-pane">
+                            <div class="form-group">
+                                <label for="poesessid" class="form-label">POESESSID</label>
+                                <input type="password" id="poesessid" class="form-input" placeholder="Enter POESESSID cookie value" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="cf-clearance" class="form-label">cf_clearance</label>
+                                <input type="password" id="cf-clearance" class="form-input" placeholder="Enter cf_clearance cookie value" required>
+                            </div>
+                            <div class="auth-help">
+                                <p><strong>How to get these values:</strong></p>
+                                <ol>
+                                    <li>Open Path of Exile website in your browser</li>
+                                    <li>Press F12 to open Developer Tools</li>
+                                    <li>Go to Application/Storage tab</li>
+                                    <li>Find Cookies section</li>
+                                    <li>Copy POESESSID and cf_clearance values</li>
+                                </ol>
+                            </div>
+                        </div>
+                        <div id="trading-tab" class="tab-pane">
+                            <div class="form-group">
+                                <label for="max-connections" class="form-label">Max Connections</label>
+                                <input type="number" id="max-connections" class="form-input" min="1" max="20" value="20">
+                            </div>
+                            <div class="form-group">
+                                <label for="travel-cooldown" class="form-label">Travel Cooldown (ms)</label>
+                                <input type="number" id="travel-cooldown" class="form-input" min="1000" max="30000" value="30000">
+                            </div>
+                        </div>
+                        <div id="computer-vision-tab" class="tab-pane">
+                            <div class="form-group">
+                                <label class="form-label">Merchant Window Configuration</label>
+                                <p class="form-help">Define the exact pixel coordinates of the merchant window area where purple-bordered items appear.</p>
+                                
+                                <div class="merchant-window-config">
+                                    <div class="coord-group">
+                                        <label class="coord-label">Top Left Corner</label>
+                                        <div class="coord-inputs">
+                                            <input type="number" id="merchant-x1" class="form-input" placeholder="X" min="0" value="834">
+                                            <input type="number" id="merchant-y1" class="form-input" placeholder="Y" min="0" value="284">
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="coord-group">
+                                        <label class="coord-label">Bottom Right Corner</label>
+                                        <div class="coord-inputs">
+                                            <input type="number" id="merchant-x2" class="form-input" placeholder="X" min="0" value="1709">
+                                            <input type="number" id="merchant-y2" class="form-input" placeholder="Y" min="0" value="1151">
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="merchant-info">
+                                        <span id="merchant-area-info" class="area-info">Area: 875x867 pixels</span>
+                                    </div>
+                                </div>
+                                
+                                <button id="cv-capture-region" class="btn btn-secondary btn-sm">Capture Current Region</button>
+                                <button id="cv-test-detection" class="btn btn-primary btn-sm">Test Detection + Mouse Movement</button>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label class="form-label">Detection Controls</label>
+                                <div class="cv-controls">
+                                    <button id="cv-start-detection" class="btn btn-success">Start Detection</button>
+                                    <button id="cv-stop-detection" class="btn btn-danger">Stop Detection</button>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Detection Status</label>
+                                <div id="cv-status" class="cv-status">
+                                    <span class="status-indicator">●</span>
+                                    <span class="status-text">Ready</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div id="automation-tab" class="tab-pane">
+                            <div class="form-group">
+                                <label for="mouse-speed" class="form-label">Mouse Speed</label>
+                                <input type="range" id="mouse-speed" class="form-range" min="0.1" max="5" step="0.1" value="1">
+                                <span id="mouse-speed-value" class="range-value">1.0</span>
+                            </div>
+                            <div class="form-group">
+                                <label for="mouse-movement-type" class="form-label">Mouse Movement Type</label>
+                                <select id="mouse-movement-type" class="form-select">
+                                    <option value="natural">Natural (Smooth straight lines)</option>
+                                    <option value="curved">Curved (Natural curved paths)</option>
+                                </select>
+                                <small class="form-help">Natural: Smooth straight-line movement with human-like timing. Curved: Creates curved paths for more advanced natural movement.</small>
+                            </div>
+            <div class="form-group">
+                <label for="click-modifiers" class="form-label">Click Modifiers</label>
+                <select id="click-modifiers" class="form-select" multiple>
+                    <option value="ctrl" selected>Ctrl</option>
+                    <option value="shift">Shift</option>
+                    <option value="alt">Alt</option>
+                </select>
+            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-modal="settings-modal">Cancel</button>
+                <button type="button" class="btn btn-primary" id="save-settings-btn">Save Settings</button>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- Scripts -->
+    <script src="js/components.js"></script>
+    <script src="js/websocket.js"></script>
+    <script src="js/ui.js"></script>
+    <script src="js/app.js"></script>
+</body>
+</html>

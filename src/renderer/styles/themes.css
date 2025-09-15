@@ -1,0 +1,120 @@
+/* Theme-specific styles */
+
+/* Dark Theme (Default) */
+.theme-dark {
+    /* Already defined in main.css as default */
+}
+
+/* Light Theme */
+.theme-light {
+    /* Override dark theme variables */
+    --bg-primary: #ffffff;
+    --bg-secondary: #f8f9fa;
+    --bg-tertiary: #e9ecef;
+    --bg-hover: #e9ecef;
+    --bg-active: #dee2e6;
+    
+    --text-primary: #212529;
+    --text-secondary: #6c757d;
+    --text-muted: #adb5bd;
+    --text-inverse: #ffffff;
+    
+    --border-primary: #dee2e6;
+    --border-secondary: #e9ecef;
+    --border-focus: #007acc;
+    
+    --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.1);
+    --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.1);
+    --shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.1);
+}
+
+/* Theme transition */
+body {
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+/* Theme-specific component adjustments */
+.theme-light .modal {
+    background: rgba(0, 0, 0, 0.3);
+}
+
+.theme-light .notification {
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.theme-light .form-range::-webkit-slider-thumb {
+    border-color: var(--bg-primary);
+}
+
+.theme-light .form-range::-moz-range-thumb {
+    border-color: var(--bg-primary);
+}
+
+/* High contrast theme for accessibility */
+.theme-high-contrast {
+    --bg-primary: #000000;
+    --bg-secondary: #1a1a1a;
+    --bg-tertiary: #333333;
+    --bg-hover: #404040;
+    --bg-active: #4a4a4a;
+    
+    --text-primary: #ffffff;
+    --text-secondary: #cccccc;
+    --text-muted: #999999;
+    --text-inverse: #000000;
+    
+    --border-primary: #666666;
+    --border-secondary: #4a4a4a;
+    --border-focus: #00ffff;
+    
+    --accent-primary: #00ffff;
+    --accent-secondary: #00cccc;
+    --accent-hover: #33ffff;
+    
+    --success: #00ff00;
+    --warning: #ffff00;
+    --error: #ff0000;
+    --info: #00ffff;
+}
+
+/* Reduced motion theme for accessibility */
+@media (prefers-reduced-motion: reduce) {
+    * {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+    }
+    
+    .loading {
+        animation: none;
+    }
+    
+    .notification {
+        animation: none;
+    }
+}
+
+/* Print styles */
+@media print {
+    .sidebar,
+    .header-actions,
+    .section-actions,
+    .status-bar,
+    .modal {
+        display: none !important;
+    }
+    
+    .app-main {
+        flex-direction: column;
+    }
+    
+    .content-area {
+        width: 100%;
+    }
+    
+    .result-item {
+        break-inside: avoid;
+        border: 1px solid #000;
+        margin-bottom: 10px;
+    }
+}
