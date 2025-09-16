@@ -35,10 +35,7 @@ A modern, standalone trading application for Path of Exile 2 that provides real-
 ### Application Installation
 
 1. Download the latest release from the [Releases](https://github.com/your-repo/poe2-trade/releases) page
-2. Choose your preferred version:
-   - **`PoE2 Trade Setup 1.0.0.exe`** - Windows installer (recommended for most users)
-   - **`PoE2 Trade 1.0.0.exe`** - Portable version (no installation required)
-3. Run the executable and configure your authentication credentials
+2. Run **`PoE2 Trade 1.0.0.exe`** and configure your authentication credentials
 
 ## Quick Start
 
