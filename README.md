@@ -13,9 +13,32 @@ A modern, standalone trading application for Path of Exile 2 that provides real-
 
 ## Installation
 
+### Prerequisites
+
+**Before running the application, you need to install Python and required packages:**
+
+1. **Install Python 3.8 or higher**:
+   - Download from [python.org](https://www.python.org/downloads/)
+   - Make sure to check "Add Python to PATH" during installation
+   - Verify installation: Open Command Prompt and run `python --version`
+
+2. **Install required Python packages**:
+   ```bash
+   pip install opencv-python==4.8.1.78 numpy==1.24.3 mss==9.0.1 Pillow==10.0.1 pyautogui==0.9.54
+   ```
+
+3. **Verify installation**:
+   ```bash
+   python -c "import cv2, numpy, mss, PIL, pyautogui; print('All packages installed successfully!')"
+   ```
+
+### Application Installation
+
 1. Download the latest release from the [Releases](https://github.com/your-repo/poe2-trade/releases) page
-2. Run `poe2-trade.exe` - no installation required
-3. Configure your authentication credentials in the app
+2. Choose your preferred version:
+   - **`PoE2 Trade Setup 1.0.0.exe`** - Windows installer (recommended for most users)
+   - **`PoE2 Trade 1.0.0.exe`** - Portable version (no installation required)
+3. Run the executable and configure your authentication credentials
 
 ## Quick Start
 
@@ -77,6 +100,15 @@ The item detection system uses OpenCV to identify purple-bordered items:
 
 ## Troubleshooting
 
+### Python Issues
+- **"spawn python ENOENT" error**: Python is not installed or not in PATH
+  - Install Python 3.8+ from [python.org](https://www.python.org/downloads/)
+  - Make sure to check "Add Python to PATH" during installation
+  - Restart Command Prompt and verify with `python --version`
+- **"Module not found" errors**: Required Python packages are missing
+  - Run: `pip install opencv-python==4.8.1.78 numpy==1.24.3 mss==9.0.1 Pillow==10.0.1 pyautogui==0.9.54`
+  - If pip is not found, try `python -m pip install` instead
+
 ### Connection Issues
 - Verify your POESESSID and cf_clearance are current
 - Check that you're not rate-limited (wait 1 second between travel requests)
@@ -86,6 +118,7 @@ The item detection system uses OpenCV to identify purple-bordered items:
 - Adjust the detection window to match your merchant window
 - Increase confidence threshold if getting false positives
 - Ensure the merchant window is visible and not minimized
+- If CV detection fails, check that Python packages are installed correctly
 
 ### Performance Issues
 - Reduce the number of concurrent searches

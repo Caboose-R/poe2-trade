@@ -67,11 +67,8 @@ class WebSocketEventHandler {
             });
         }
 
-        // Update UI with new items
-        if (data.type === 'new_items' && data.items) {
-            console.log('Updating search results directly:', data.items);
-            this.updateSearchResults(data.searchId, data.items);
-        }
+        // Note: UI updates are handled by registered message handlers
+        // No direct UI updates here to avoid duplication
     }
 
     handleStatus(data) {
